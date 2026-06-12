@@ -24,7 +24,7 @@ import sys
 from google import genai
 from google.genai import types
 
-MODEL = "gemini-2.0-flash"
+MODEL = "gemini-2.5-flash"
 
 SYSTEM_PROMPT = (
     "You are a SQL developer that is expert in Bitcoin and you answer natural "

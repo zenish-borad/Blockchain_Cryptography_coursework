@@ -1,0 +1,120 @@
+
+=== Test 1 [easy] ===
+Q:    How many blocks are stored in the database?
+SQL:  SELECT COUNT(*) FROM blocks;
+ANS:  65
+LLM SQL: SELECT COUNT(*) FROM blocks
+LLM ANS: 65
+RESULT:  ✅ PASS
+
+=== Test 2 [easy] ===
+Q:    What is the height of the latest block?
+SQL:  SELECT MAX(height) FROM blocks;
+ANS:  656923
+  (waiting 13s for rate limit...)
+LLM SQL: SELECT MAX(height) FROM blocks
+LLM ANS: 656923
+RESULT:  ✅ PASS
+
+=== Test 3 [easy] ===
+Q:    What is the hash of the block at the minimum height?
+SQL:  SELECT hash FROM blocks WHERE height = (SELECT MIN(height) FROM blocks);
+ANS:  0000000000000000000bb670d385ca0326c36d49d65968e2dc509d8c18723568
+  (waiting 13s for rate limit...)
+LLM SQL: SELECT hash FROM blocks ORDER BY height ASC LIMIT 1
+LLM ANS: 0000000000000000000bb670d385ca0326c36d49d65968e2dc509d8c18723568
+RESULT:  ✅ PASS
+
+=== Test 4 [easy] ===
+Q:    How many transactions are stored in total?
+SQL:  SELECT COUNT(*) FROM transactions;
+ANS:  147741
+  (waiting 13s for rate limit...)
+LLM SQL: SELECT COUNT(txid) FROM transactions
+LLM ANS: 147741
+RESULT:  ✅ PASS
+
+=== Test 5 [medium] ===
+Q:    How many transactions are in the most recent block?
+SQL:  SELECT n_tx FROM blocks WHERE height = (SELECT MAX(height) FROM blocks);
+ANS:  2679
+  (waiting 13s for rate limit...)
+LLM SQL: SELECT n_tx FROM blocks ORDER BY height DESC LIMIT 1
+LLM ANS: 2679
+RESULT:  ✅ PASS
+
+=== Test 6 [medium] ===
+Q:    Which block height has the most transactions?
+SQL:  SELECT height, n_tx FROM blocks ORDER BY n_tx DESC LIMIT 1;
+ANS:  [(651881, 3153)]
+  (waiting 13s for rate limit...)
+LLM SQL: SELECT height FROM blocks ORDER BY n_tx DESC LIMIT 1
+LLM ANS: 651881
+RESULT:  ❌ FAIL
+
+=== Test 7 [medium] ===
+Q:    List the 5 largest blocks by size in bytes with their heights.
+SQL:  SELECT height, size FROM blocks ORDER BY size DESC LIMIT 5;
+ANS:  [(656900, 1531614), (656899, 1513115), (651875, 1485308), (656913, 1482919), (651751, 1456994)]
+  (waiting 13s for rate limit...)
+LLM SQL: SELECT size, height FROM blocks ORDER BY size DESC LIMIT 5
+LLM ANS: [(1531614, 656900), (1513115, 656899), (1485308, 651875), (1482919, 656913), (1456994, 651751)]
+RESULT:  ❌ FAIL
+
+=== Test 8 [medium] ===
+Q:    What is the average number of transactions per block?
+SQL:  SELECT AVG(n_tx) FROM blocks;
+ANS:  2272.9384615384615
+  (waiting 13s for rate limit...)
+LLM SQL: SELECT AVG(n_tx) FROM blocks
+LLM ANS: 2272.9384615384615
+RESULT:  ✅ PASS
+
+=== Test 9 [hard] ===
+Q:    What is the total number of transaction outputs in the database?
+SQL:  SELECT COUNT(*) FROM tx_outputs;
+ANS:  423388
+  (waiting 13s for rate limit...)
+LLM SQL: SELECT COUNT(*) FROM tx_outputs
+LLM ANS: 423388
+RESULT:  ✅ PASS
+
+=== Test 10 [hard] ===
+Q:    How many distinct output addresses appear in the database?
+SQL:  SELECT COUNT(DISTINCT address) FROM tx_outputs WHERE address IS NOT NULL;
+ANS:  345693
+  (waiting 13s for rate limit...)
+LLM SQL: SELECT COUNT(DISTINCT address) FROM tx_outputs WHERE address IS NOT NULL
+LLM ANS: 345693
+RESULT:  ✅ PASS
+
+=== Test 11 [hard] ===
+Q:    What is the largest single transaction output value in BTC?
+SQL:  SELECT MAX(value) FROM tx_outputs;
+ANS:  25778.82386284
+  (waiting 13s for rate limit...)
+LLM SQL: SELECT MAX(value) FROM tx_outputs
+LLM ANS: 25778.82386284
+RESULT:  ✅ PASS
+
+=== Test 12 [hard] ===
+Q:    Which block has the largest total output value across all its transactions?
+SQL:  SELECT b.height, SUM(o.value) as total_value FROM tx_outputs o JOIN transactions t ON o.txid = t.txid JOIN blocks b ON t.block_hash = b.hash GROUP BY b.height ORDER BY total_value DESC LIMIT 1;
+ANS:  [(656901, 65662.45172354)]
+  (waiting 13s for rate limit...)
+LLM SQL: SELECT
+  T1.hash
+FROM blocks AS T1
+INNER JOIN transactions AS T2
+  ON T1.hash = T2.block_hash
+INNER JOIN tx_outputs AS T3
+  ON T2.txid = T3.txid
+GROUP BY
+  T1.hash
+ORDER BY
+  SUM(T3.value) DESC
+LIMIT 1;
+LLM ANS: 00000000000000000007f9967ff1446e05aa66b56f58503a42b81ac10fd5555d
+RESULT:  ❌ FAIL
+
+==== 9/12 passed ====
