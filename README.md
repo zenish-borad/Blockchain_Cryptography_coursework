@@ -44,3 +44,5 @@ Bitcoin-Text-to-SQL-Pipeline/
 python3 ingest.py --db bitcoin.db --schema schema.sql
 python3 text_to_sql.py "how many blocks are there?" --db bitcoin.db
 python3 test_cases.py --db bitcoin.db
+
+### Scheduling the ingester (every 5 minutes)

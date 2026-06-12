@@ -1,3 +1,8 @@
+-- Schema auto-generated using Gemini AI (gemini-2.5-flash).
+-- Approach: fed a sample getblock verbosity=2 JSON to Gemini and asked it to
+-- "Write code to auto-generate a SQL schema from this JSON object".
+-- Output was 99% correct with minor manual adjustments to foreign keys.
+
 -- ============================================================
 -- Bitcoin Core  getblock <blockhash> 2  ->  SQLite schema
 -- Captures every element returned by getblock at verbosity=2.
